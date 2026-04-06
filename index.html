@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopMind AI — Shopify Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #7c5cfc;
+    --accent2: #00e5a0;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --danger: #ff4d6d;
+    --shopify: #96bf48;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BG ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ══════════════════════════════
+     LANDING SCREEN
+  ══════════════════════════════ */
+  #landing {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .logo-mark {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 32px;
+    box-shadow: 0 0 60px rgba(124,92,252,0.4);
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 60px rgba(124,92,252,0.4); }
+    50% { box-shadow: 0 0 100px rgba(124,92,252,0.7); }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 8vw, 72px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .tagline {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+
+  .features {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .feat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .feat .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  .connect-btn {
+    background: linear-gradient(135deg, var(--accent), #5b3fd4);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 18px 40px;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 40px rgba(124,92,252,0.35);
+  }
+
+  .connect-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 50px rgba(124,92,252,0.5);
+  }
+
+  .connect-btn:active { transform: translateY(0); }
+
+  .store-input-wrap {
+    margin-top: 32px;
+    max-width: 400px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .store-input-label {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
+  .store-input-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .store-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .store-input:focus { border-color: var(--accent); }
+  .store-input::placeholder { color: var(--muted); }
+
+  .go-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .go-btn:hover { background: #6a4de0; }
+
+  .error-msg {
+    color: var(--danger);
+    font-size: 12px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  /* ══════════════════════════════
+     LOADING SCREEN
+  ══════════════════════════════ */
+  #loading {
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* ══════════════════════════════
+     DASHBOARD SCREEN
+  ══════════════════════════════ */
+  #dashboard { flex-direction: column; }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .topbar-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .topbar-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .store-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--shopify);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .store-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--shopify);
+  }
+
+  .disconnect-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .disconnect-btn:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+  }
+
+  .main-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    overflow: hidden;
+    height: calc(100vh - 69px);
+  }
+
+  /* ── LEFT PANEL ── */
+  .left-panel {
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .stat-card:hover { border-color: var(--accent); }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .stat-value.green { color: var(--accent2); }
+  .stat-value.purple { color: var(--accent); }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* products */
+  .products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .product-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .product-item:hover { border-color: var(--border); }
+
+  .product-info { flex: 1; min-width: 0; }
+
+  .product-name {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+
+  .product-meta {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .product-price {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent2);
+    white-space: nowrap;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .loading-dots::after {
+    content: '...';
+    animation: dots 1.5s infinite;
+  }
+
+  @keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+  }
+
+  /* ── RIGHT PANEL — CHAT ── */
+  .chat-panel {
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+  }
+
+  .chat-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ai-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent2);
+    box-shadow: 0 0 8px var(--accent2);
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  @keyframes glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .chat-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .msg {
+    max-width: 90%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.ai {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+
+  .msg.user {
+    background: var(--accent);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    color: #fff;
+  }
+
+  .msg.typing {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    align-self: flex-start;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .chat-input-wrap {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .quick-questions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .quick-q {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .quick-q:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .chat-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s;
+    height: 44px;
+    min-height: 44px;
+    max-height: 120px;
+  }
+
+  .chat-input:focus { border-color: var(--accent); }
+  .chat-input::placeholder { color: var(--muted); }
+
+  .send-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover { background: #6a4de0; transform: scale(1.05); }
+  .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  @media (max-width: 700px) {
+    .main-content { grid-template-columns: 1fr; }
+    .left-panel { height: auto; }
+    .chat-panel { height: 60vh; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ LANDING ══ -->
+<div id="landing" class="screen active">
+  <div class="logo-mark">🧠</div>
+  <h1>Shop<span>Mind</span></h1>
+  <p class="tagline">AI Agent for Shopify</p>
+
+  <div class="features">
+    <div class="feat"><span class="dot"></span>Store Analytics</div>
+    <div class="feat"><span class="dot"></span>AI Chat Assistant</div>
+    <div class="feat"><span class="dot"></span>Product Insights</div>
+    <div class="feat"><span class="dot"></span>Order Tracking</div>
+  </div>
+
+  <div class="store-input-wrap">
+    <div class="store-input-label">Your Shopify Store</div>
+    <div class="store-input-row">
+      <input
+        type="text"
+        class="store-input"
+        id="storeInput"
+        placeholder="your-store.myshopify.com"
+        autocomplete="off"
+        autocapitalize="off"
+      />
+      <button class="go-btn" onclick="connectStore()">Connect →</button>
+    </div>
+    <div class="error-msg" id="errorMsg">Please enter your store URL</div>
+  </div>
+</div>
+
+<!-- ══ LOADING ══ -->
+<div id="loading" class="screen">
+  <div class="spinner"></div>
+  <div class="loading-text">CONNECTING TO SHOPIFY<span class="loading-dots"></span></div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="dashboard" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">🧠</div>
+      <div class="topbar-title">ShopMind</div>
+    </div>
+    <div class="store-badge" id="storeBadge">Loading...</div>
+    <button class="disconnect-btn" onclick="disconnect()">Disconnect</button>
+  </div>
+
+  <div class="main-content">
+    <!-- LEFT -->
+    <div class="left-panel">
+      <div>
+        <div class="section-title">Store Overview</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Products</div>
+            <div class="stat-value purple" id="statProducts">—</div>
+            <div class="stat-sub">Total listed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Orders</div>
+            <div class="stat-value green" id="statOrders">—</div>
+            <div class="stat-sub">All time</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Revenue</div>
+            <div class="stat-value" id="statRevenue">—</div>
+            <div class="stat-sub">Total sales</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Customers</div>
+            <div class="stat-value purple" id="statCustomers">—</div>
+            <div class="stat-sub">Registered</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Recent Products</div>
+        <div class="products-list" id="productsList">
+          <div class="empty-state">Loading products<span class="loading-dots"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — CHAT -->
+    <div class="chat-panel">
+      <div class="chat-header">
+        <div class="ai-dot"></div>
+        <div class="chat-title">AI Assistant</div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg ai">
+          👋 Hi! I'm your ShopMind AI. Ask me anything about your store — products, orders, revenue, or growth tips!
+        </div>
+      </div>
+
+      <div class="chat-input-wrap">
+        <div class="quick-questions">
+          <span class="quick-q" onclick="quickAsk('How many products do I have?')">Products?</span>
+          <span class="quick-q" onclick="quickAsk('Show me my recent orders')">Orders?</span>
+          <span class="quick-q" onclick="quickAsk('How can I increase my sales?')">Sales tips?</span>
+          <span class="quick-q" onclick="quickAsk('Analyze my store performance')">Analyze?</span>
+        </div>
+        <div class="chat-row">
+          <textarea
+            class="chat-input"
+            id="chatInput"
+            placeholder="Ask about your store..."
+            onkeydown="handleKey(event)"
+          ></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let storeData = {};
+let accessToken = '';
+let shopDomain = '';
+let chatHistory = [];
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  const shop = params.get('shop');
+
+  if (token && shop) {
+    accessToken = token;
+    shopDomain = shop;
+    sessionStorage.setItem('sm_token', token);
+    sessionStorage.setItem('sm_shop', shop);
+    window.history.replaceState({}, '', '/');
+    showDashboard();
+  } else {
+    const savedToken = sessionStorage.getItem('sm_token');
+    const savedShop = sessionStorage.getItem('sm_shop');
+    if (savedToken && savedShop) {
+      accessToken = savedToken;
+      shopDomain = savedShop;
+      showDashboard();
+    } else {
+      showScreen('landing');
+    }
+  }
+});
+
+// ── SCREENS ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showDashboard() {
+  showScreen('dashboard');
+  document.getElementById('storeBadge').textContent = shopDomain;
+  loadStoreData();
+}
+
+// ── CONNECT ──
+function connectStore() {
+  let shop = document.getElementById('storeInput').value.trim();
+  if (!shop) {
+    document.getElementById('errorMsg').style.display = 'block';
+    return;
+  }
+  document.getElementById('errorMsg').style.display = 'none';
+
+  if (!shop.includes('.myshopify.com')) {
+    shop = shop.replace(/\..*$/, '') + '.myshopify.com';
+  }
+  shop = shop.replace(/^https?:\/\//, '');
+
+  showScreen('loading');
+  window.location.href = `/auth/callback?shop=${encodeURIComponent(shop)}`;
+}
+
+function disconnect() {
+  sessionStorage.clear();
+  accessToken = '';
+  shopDomain = '';
+  chatHistory = [];
+  showScreen('landing');
+}
+
+// ── LOAD STORE DATA ──
+async function loadStoreData() {
+  try {
+    const res = await fetch('/api/shopify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ shop: shopDomain, token: accessToken, action: 'getStoreData' })
+    });
+
+    if (!res.ok) throw new Error('Failed');
+    const data = await res.json();
+    storeData = data;
+
+    // Stats
+    document.getElementById('statProducts').textContent = data.productsCount ?? '0';
+    document.getElementById('statOrders').textContent = data.ordersCount ?? '0';
+    document.getElementById('statRevenue').textContent = data.totalRevenue ? '$' + Number(data.totalRevenue).toFixed(0) : '$0';
+    document.getElementById('statCustomers').textContent = data.customersCount ?? '0';
+
+    // Products list
+    const list = document.getElementById('productsList');
+    if (data.products && data.products.length > 0) {
+      list.innerHTML = data.products.slice(0, 6).map(p => `
+        <div class="product-item">
+          <div class="product-info">
+            <div class="product-name">${p.title}</div>
+            <div class="product-meta">${p.product_type || 'Product'} • ${p.status}</div>
+          </div>
+          <div class="product-price">${p.variants?.[0]?.price ? '$' + p.variants[0].price : '—'}</div>
+        </div>
+      `).join('');
+    } else {
+      list.innerHTML = '<div class="empty-state">No products fo
