@@ -1,0 +1,13 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/auth/callback"
+  to = "/.netlify/functions/auth-callback"
+  status = 200
+
+[[redirects]]
+  from = "/api/shopify"
+  to = "/.netlify/functions/shopify"
+  status = 200
